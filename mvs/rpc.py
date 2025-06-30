@@ -173,12 +173,14 @@ class RPC:
     # Default range is approximately 1km horizontal and 500m vertical
     # The clat, clon, zc values are image center UTM coordinates that we
     # pass in to make sure they're the same value for all images
-    def to_matrix(self, clat, clon, zc, x_km = 1.0, z_km = 0.5, num_samples = 1000):
+    def to_matrix(self, clat, clon, zc, x_km = 0.6, z_km = 0.1, num_samples = 10000):
         
         # get approximate image center coordinate
+        # set clat, clon, zc into 0, 0, 0?
         xc, yc, zone_number, zone_letter = wgs84_to_utm(clat, clon)
 
         # sample local world coordinates around the center coordinate
+        # ic, jc +- 100?
         np.random.seed(0)
         dlat = dlon = (x_km /2.0) / 111.0
         dheight = (z_km / 2.0) * 1000.0
@@ -225,10 +227,10 @@ class RPC:
             M[m][14] = -z[k]*j[k]
             m = m + 1
 
-            # populate the k terms (k is zero)
+            # populate the r terms (r is zero)
             M[m][0]  = 0.0;  M[m][1]  = 0.0;  M[m][2]  = 0.0;  M[m][3]  = 0.0
             M[m][4]  = 0.0;  M[m][5]  = 0.0;  M[m][6] = 0.0;   M[m][7] = 0.0
-            M[m][8]  = x[k]; M[m][9]  = y[k]; M[m][10] = z[k]; M[m][11]  = 1.0
+            M[m][8]  = x[k]; M[m][9]  = y[k]; M[m][10] = z[k]; M[m][11]  = 1.0            
             m = m + 1
 
         elapsed_total = (time.time() - start_time)
